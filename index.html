@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VoxelCraft</title>
+<title>RFCraft</title>
 <style>
 @font-face{font-family:'MCFont';src:local('Silkscreen'),local('Press Start 2P'),local('VT323');}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -226,17 +226,17 @@ canvas#gameCanvas{display:block}
 </head>
 <body>
 <div id="blocker"><div class="dirt-bg" id="title-dirt-bg"></div><div class="inner">
-<h1>VoxelCraft <span></span></h1>
+<h1>RFCraft <span></span></h1>
 <div class="splash-text" id="splash-text">Also try Minecraft!</div>
 <div id="title-buttons">
 <button id="continue-btn" style="display:none;" onclick="startPlaying()">Continue</button>
 <button id="new-world-btn" onclick="showWorldCreateScreen()">Singleplayer</button>
 </div>
 <div class="section" style="margin-top:30px;">
-<p style="color:#888;font-size:9px;line-height:1.5">Biomes • Caves • Day/Night • Clouds • Zombies • Skeletons • Animals • Flowers • Hunger • 40+ Blocks • Doors • Chests • Weather • Tools • Water • Auto-Save • Beds • Torch Lights • Furnace/Smelting • Armor • XP/Levels • Drag & Drop • Ladders • Slabs & Fences • Villager Trading • Redstone</p></div>
+<p style="color:#888;font-size:9px;line-height:1.5">Biomes • Caves • Day/Night • Clouds • Zombies • Skeletons • Animals • Flowers • Hunger • 40+ Blocks • Doors • Chests • Weather • Tools • Water • Auto-Save • Beds • Torch Lights • Furnace/Smelting • Armor • XP/Levels • Drag & Drop • Ladders • Slabs & Fences • Villager Trading • Redstone • Signs • Snow Layers</p></div>
 <div class="section" style="margin-top:6px;">
 <p style="color:#666;font-size:9px;"><span class="key">W A S D</span> Move • <span class="key">Space</span> Jump • <span class="key">E</span> Inventory • <span class="key">C</span> Crafting • <span class="key">Esc</span> Pause</p></div>
-<div class="version-text">VoxelCraft 7.1</div>
+<div class="version-text">RFCraft 7.1</div>
 </div></div>
 <div id="pause-btn" onclick="openPauseMenu()">☰</div>
 <div id="pause-overlay"><div id="pause-panel"><h2>Game Menu</h2>
@@ -294,6 +294,7 @@ canvas#gameCanvas{display:block}
 <button id="wc-back-btn" onclick="closeWorldCreateScreen()">Cancel</button>
 </div></div>
 <div id="trade-overlay"><div id="trade-panel"><h2>🏪 Villager Trading</h2><div id="trade-list"></div><button id="trade-close-btn" onclick="closeTrade()">✕ Close</button></div></div>
+<div id="enchant-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:90"><div id="enchant-panel" style="background:#1a0a2e;border:3px solid #6a2fc9;border-radius:10px;padding:20px;min-width:320px;max-width:400px;color:#fff;font-family:monospace"><h2 style="text-align:center;color:#b48eff;margin:0 0 6px">✨ Enchanting Table</h2><div id="enchant-item-info" style="text-align:center;padding:6px;background:#2a1a4e;border-radius:6px;margin-bottom:10px;min-height:28px;font-size:13px"></div><div id="enchant-list" style="display:flex;flex-direction:column;gap:6px"></div><div style="text-align:center;margin-top:10px;font-size:12px;color:#8a8">Your Level: <span id="enchant-level-display">0</span></div><button onclick="closeEnchantUI()" style="margin-top:10px;width:100%;padding:8px;background:#6a2fc9;color:#fff;border:none;border-radius:5px;cursor:pointer;font-size:14px">✖ Close</button></div></div>
 <div id="fly-indicator" style="display:none!important"></div>
 <div id="gamemode-indicator"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -329,7 +330,7 @@ octave3D(x,y,z,o,p,l,s){let v=0,a=1,f=s,m=0;for(let i=0;i<o;i++){v+=this.noise3D
 return SN;})();
 
 let worldSeed=Math.random()*65536|0,worldSeedB=Math.random()*65536|0,worldSeedC=Math.random()*65536|0;
-try{const ss=localStorage.getItem('voxelcraft_seeds');if(ss){const s=JSON.parse(ss);worldSeed=s.a;worldSeedB=s.b;worldSeedC=s.c;}}catch(e){}
+try{const ss=localStorage.getItem('rfcraft_seeds');if(ss){const s=JSON.parse(ss);worldSeed=s.a;worldSeedB=s.b;worldSeedC=s.c;}}catch(e){}
 const noise=new SimplexNoise(worldSeed),noiseB=new SimplexNoise(worldSeedB),noiseC=new SimplexNoise(worldSeedC);
 
 var gameMode='survival';
@@ -340,13 +341,14 @@ var worldName='My World';
 const BLOCK={AIR:0,GRASS:1,DIRT:2,STONE:3,WOOD:4,SAND:5,WATER:6,COBBLESTONE:7,GLASS:8,LEAVES:9,PLANKS:10,BRICK:11,
 SNOW:12,COAL_ORE:13,IRON_ORE:14,GOLD_ORE:15,DIAMOND_ORE:16,BEDROCK:17,GRAVEL:18,CLAY:19,OBSIDIAN:20,TNT:21,
 TORCH:22,ICE:23,BOOKSHELF:24,MOSSY_COBBLESTONE:25,LAVA:26,GLOWSTONE:27,NETHERRACK:28,REDSTONE_ORE:29,
-DOOR_BOTTOM:30,DOOR_TOP:31,CHEST:32,RED_FLOWER:33,YELLOW_FLOWER:34,TALL_GRASS:35,WOOL:36,BED:37,FURNACE:38,SANDSTONE:39,CACTUS:40,DEAD_BUSH:41,MUSHROOM_BROWN:42,MUSHROOM_RED:43,FENCE:44,LADDER:45,SLAB_WOOD:46,SLAB_STONE:47,LEVER:48,PRESSURE_PLATE:49,IRON_DOOR_BOTTOM:50,IRON_DOOR_TOP:51,BIRCH_WOOD:52,BIRCH_LEAVES:53,TALL_GRASS_TOP:54};
+DOOR_BOTTOM:30,DOOR_TOP:31,CHEST:32,RED_FLOWER:33,YELLOW_FLOWER:34,TALL_GRASS:35,WOOL:36,BED:37,FURNACE:38,SANDSTONE:39,CACTUS:40,DEAD_BUSH:41,MUSHROOM_BROWN:42,MUSHROOM_RED:43,FENCE:44,LADDER:45,SLAB_WOOD:46,SLAB_STONE:47,LEVER:48,PRESSURE_PLATE:49,IRON_DOOR_BOTTOM:50,IRON_DOOR_TOP:51,BIRCH_WOOD:52,BIRCH_LEAVES:53,TALL_GRASS_TOP:54,ENCHANTING_TABLE:55,SIGN:56,SNOW_LAYER:57};
 const BLOCK_NAMES=['Air','Grass','Dirt','Stone','Wood','Sand','Water','Cobblestone','Glass','Leaves','Planks','Brick',
 'Snow','Coal Ore','Iron Ore','Gold Ore','Diamond Ore','Bedrock','Gravel','Clay','Obsidian','TNT','Torch',
 'Ice','Bookshelf','Mossy Cobble','Lava','Glowstone','Netherrack','Redstone Ore','Door','Door Top','Chest',
-'Red Flower','Yellow Flower','Tall Grass','Wool','Bed','Furnace','Sandstone','Cactus','Dead Bush','Brown Mushroom','Red Mushroom','Fence','Ladder','Wood Slab','Stone Slab','Lever','Pressure Plate','Iron Door','Iron Door Top','Birch Wood','Birch Leaves','Tall Grass Top'];
-const CROSS_BLOCKS=new Set([BLOCK.RED_FLOWER,BLOCK.YELLOW_FLOWER,BLOCK.TALL_GRASS,BLOCK.TALL_GRASS_TOP,BLOCK.DEAD_BUSH,BLOCK.MUSHROOM_BROWN,BLOCK.MUSHROOM_RED,BLOCK.LADDER,BLOCK.LEVER]);
-const SLAB_BLOCKS=new Set([BLOCK.SLAB_WOOD,BLOCK.SLAB_STONE]);
+'Red Flower','Yellow Flower','Tall Grass','Wool','Bed','Furnace','Sandstone','Cactus','Dead Bush','Brown Mushroom','Red Mushroom','Fence','Ladder','Wood Slab','Stone Slab','Lever','Pressure Plate','Iron Door','Iron Door Top','Birch Wood','Birch Leaves','Tall Grass Top','Enchanting Table','Sign','Snow Layer'];
+const CROSS_BLOCKS=new Set([BLOCK.RED_FLOWER,BLOCK.YELLOW_FLOWER,BLOCK.TALL_GRASS,BLOCK.TALL_GRASS_TOP,BLOCK.DEAD_BUSH,BLOCK.MUSHROOM_BROWN,BLOCK.MUSHROOM_RED,BLOCK.LEVER]);
+const FLAT_FACE_BLOCKS=new Set([BLOCK.LADDER,BLOCK.SIGN]);
+const SLAB_BLOCKS=new Set([BLOCK.SLAB_WOOD,BLOCK.SLAB_STONE,BLOCK.ENCHANTING_TABLE,BLOCK.SNOW_LAYER]);
 
 const ITEM={STICK:'stick',WOODEN_SWORD:'wooden_sword',STONE_SWORD:'stone_sword',IRON_SWORD:'iron_sword',
 DIAMOND_SWORD:'diamond_sword',RAW_BEEF:'raw_beef',BREAD:'bread',APPLE:'apple',IRON_INGOT:'iron_ingot',DIAMOND:'diamond',
@@ -415,21 +417,23 @@ const ITEM_DATA={
 
 function makeBlockSlot(b){return{type:'block',block:b,count:1};}
 function makeItemSlot(i,c){return{type:'item',item:i,count:c||1};}
-function getSlotName(s){if(!s)return'Empty';if(s.type==='block')return BLOCK_NAMES[s.block];if(s.type==='item')return ITEM_DATA[s.item]?.name||'?';return'?';}
+function getSlotName(s){if(!s)return'Empty';if(s.type==='block')return BLOCK_NAMES[s.block];if(s.type==='item'){let n=ITEM_DATA[s.item]?.name||'?';if(s.enchantments&&s.enchantments.length>0)n='✨'+n;return n;}return'?';}
 function sameSlotType(a,b){if(!a||!b||a.type!==b.type)return false;return a.type==='block'?a.block===b.block:a.item===b.item;}
 function getMaxStack(s){if(!s)return 64;if(s.type==='item'){const d=ITEM_DATA[s.item];return d?d.maxStack:64;}return 64;}
 function isSlotSword(s){return s&&s.type==='item'&&ITEM_DATA[s.item]?.type==='sword';}
 function isSlotFood(s){return s&&s.type==='item'&&ITEM_DATA[s.item]?.type==='food';}
 function getSwordDamage(s){if(!isSlotSword(s))return 1;return ITEM_DATA[s.item].damage;}
-function getAttackDamage(s){if(!s)return 1;if(s.type!=='item')return 1;const d=ITEM_DATA[s.item];if(!d)return 1;if(d.type==='sword')return d.damage;if(d.type==='axe')return({1.5:3,2:4,3:5,4:6}[d.tier]||3);if(d.type==='pickaxe'||d.type==='shovel')return 2;return 1;}
+function getAttackDamage(s){if(!s)return 1;if(s.type!=='item')return 1;const d=ITEM_DATA[s.item];if(!d)return 1;let dmg=1;if(d.type==='sword')dmg=d.damage;else if(d.type==='axe')dmg=({1.5:3,2:4,3:5,4:6}[d.tier]||3);else if(d.type==='pickaxe'||d.type==='shovel')dmg=2;if(s.enchantments&&s.enchantments.includes('SHARPNESS'))dmg+=2;return dmg;}
 function isSlotTool(s){return s&&s.type==='item'&&['pickaxe','axe','shovel'].includes(ITEM_DATA[s.item]?.type);}
 const STONE_BLOCKS=new Set([BLOCK.STONE,BLOCK.COBBLESTONE,BLOCK.MOSSY_COBBLESTONE,BLOCK.COAL_ORE,BLOCK.IRON_ORE,BLOCK.GOLD_ORE,BLOCK.DIAMOND_ORE,BLOCK.REDSTONE_ORE,BLOCK.OBSIDIAN,BLOCK.NETHERRACK,BLOCK.BRICK,BLOCK.FURNACE,BLOCK.SANDSTONE,BLOCK.SLAB_STONE]);
-const WOOD_BLOCKS=new Set([BLOCK.WOOD,BLOCK.BIRCH_WOOD,BLOCK.PLANKS,BLOCK.BOOKSHELF,BLOCK.CHEST,BLOCK.BED,BLOCK.FENCE,BLOCK.LADDER,BLOCK.SLAB_WOOD]);
-const DIRT_BLOCKS=new Set([BLOCK.DIRT,BLOCK.GRASS,BLOCK.SAND,BLOCK.GRAVEL,BLOCK.CLAY,BLOCK.SNOW,BLOCK.SANDSTONE]);
+const WOOD_BLOCKS=new Set([BLOCK.WOOD,BLOCK.BIRCH_WOOD,BLOCK.PLANKS,BLOCK.BOOKSHELF,BLOCK.CHEST,BLOCK.BED,BLOCK.FENCE,BLOCK.LADDER,BLOCK.SLAB_WOOD,BLOCK.SIGN]);
+const DIRT_BLOCKS=new Set([BLOCK.DIRT,BLOCK.GRASS,BLOCK.SAND,BLOCK.GRAVEL,BLOCK.CLAY,BLOCK.SNOW,BLOCK.SANDSTONE,BLOCK.SNOW_LAYER]);
 function getToolSpeedMul(slot,blockType){if(!isSlotTool(slot))return 1;const d=ITEM_DATA[slot.item];
-if(d.type==='pickaxe'&&STONE_BLOCKS.has(blockType))return d.tier;
-if(d.type==='axe'&&WOOD_BLOCKS.has(blockType))return d.tier;
-if(d.type==='shovel'&&DIRT_BLOCKS.has(blockType))return d.tier;return 1;}
+let base=1;
+if(d.type==='pickaxe'&&STONE_BLOCKS.has(blockType))base=d.tier;
+else if(d.type==='axe'&&WOOD_BLOCKS.has(blockType))base=d.tier;
+else if(d.type==='shovel'&&DIRT_BLOCKS.has(blockType))base=d.tier;
+if(slot.enchantments&&slot.enchantments.includes('EFFICIENCY'))base*=1.5;return base;}
 
 const BLOCK_HARDNESS={[BLOCK.LEAVES]:0.2,[BLOCK.TORCH]:0.2,[BLOCK.DIRT]:0.5,[BLOCK.SAND]:0.5,[BLOCK.GRAVEL]:0.5,[BLOCK.CLAY]:0.5,[BLOCK.SNOW]:0.5,
 [BLOCK.WOOD]:1,[BLOCK.PLANKS]:1,[BLOCK.NETHERRACK]:1,[BLOCK.BOOKSHELF]:1,[BLOCK.STONE]:1.5,[BLOCK.COBBLESTONE]:1.5,
@@ -441,27 +445,28 @@ const BLOCK_HARDNESS={[BLOCK.LEAVES]:0.2,[BLOCK.TORCH]:0.2,[BLOCK.DIRT]:0.5,[BLO
 [BLOCK.SANDSTONE]:1.2,[BLOCK.CACTUS]:0.4,[BLOCK.DEAD_BUSH]:0,[BLOCK.MUSHROOM_BROWN]:0,[BLOCK.MUSHROOM_RED]:0,
 [BLOCK.FENCE]:1,[BLOCK.LADDER]:0.4,[BLOCK.SLAB_WOOD]:1,[BLOCK.SLAB_STONE]:1.5,
 [BLOCK.LEVER]:0.3,[BLOCK.PRESSURE_PLATE]:0.3,[BLOCK.IRON_DOOR_BOTTOM]:1.5,[BLOCK.IRON_DOOR_TOP]:1.5,
-[BLOCK.BIRCH_WOOD]:1,[BLOCK.BIRCH_LEAVES]:0.2,[BLOCK.TALL_GRASS_TOP]:0};
+[BLOCK.BIRCH_WOOD]:1,[BLOCK.BIRCH_LEAVES]:0.2,[BLOCK.TALL_GRASS_TOP]:0,[BLOCK.ENCHANTING_TABLE]:2.5,
+[BLOCK.SIGN]:0.5,[BLOCK.SNOW_LAYER]:0.1};
 function getBlockHardness(bt){return BLOCK_HARDNESS[bt]!==undefined?BLOCK_HARDNESS[bt]:1;}
 
 const TRANSPARENT_BLOCKS=new Set([BLOCK.AIR,BLOCK.WATER,BLOCK.GLASS,BLOCK.TORCH,BLOCK.ICE,BLOCK.LAVA,BLOCK.DOOR_BOTTOM,BLOCK.DOOR_TOP,
-BLOCK.RED_FLOWER,BLOCK.YELLOW_FLOWER,BLOCK.TALL_GRASS,BLOCK.TALL_GRASS_TOP,BLOCK.BED,BLOCK.DEAD_BUSH,BLOCK.MUSHROOM_BROWN,BLOCK.MUSHROOM_RED,BLOCK.LADDER,BLOCK.SLAB_WOOD,BLOCK.SLAB_STONE,BLOCK.LEVER,BLOCK.PRESSURE_PLATE,BLOCK.IRON_DOOR_BOTTOM,BLOCK.IRON_DOOR_TOP,BLOCK.BIRCH_LEAVES]);
+BLOCK.RED_FLOWER,BLOCK.YELLOW_FLOWER,BLOCK.TALL_GRASS,BLOCK.TALL_GRASS_TOP,BLOCK.BED,BLOCK.DEAD_BUSH,BLOCK.MUSHROOM_BROWN,BLOCK.MUSHROOM_RED,BLOCK.LADDER,BLOCK.SLAB_WOOD,BLOCK.SLAB_STONE,BLOCK.LEVER,BLOCK.PRESSURE_PLATE,BLOCK.IRON_DOOR_BOTTOM,BLOCK.IRON_DOOR_TOP,BLOCK.BIRCH_LEAVES,BLOCK.ENCHANTING_TABLE,BLOCK.SIGN,BLOCK.SNOW_LAYER]);
 const SOLID_BLOCKS_SET=new Set();
-for(let i=1;i<=54;i++)if(i!==BLOCK.WATER&&i!==BLOCK.TORCH&&i!==BLOCK.LAVA&&i!==BLOCK.PRESSURE_PLATE&&!CROSS_BLOCKS.has(i)&&!SLAB_BLOCKS.has(i))SOLID_BLOCKS_SET.add(i);
+for(let i=1;i<=57;i++)if(i!==BLOCK.WATER&&i!==BLOCK.TORCH&&i!==BLOCK.LAVA&&i!==BLOCK.PRESSURE_PLATE&&i!==BLOCK.SIGN&&!CROSS_BLOCKS.has(i)&&!SLAB_BLOCKS.has(i)&&!FLAT_FACE_BLOCKS.has(i))SOLID_BLOCKS_SET.add(i);
 
-const doorStates=new Map(),chestInventories=new Map(),blockChanges=new Map(),furnaceInventories=new Map(),leverStates=new Map();
+const doorStates=new Map(),chestInventories=new Map(),blockChanges=new Map(),furnaceInventories=new Map(),leverStates=new Map(),signTexts=new Map();
 let bedSpawnPoint=null;
 const playerArmor={helmet:null,chestplate:null,leggings:null,boots:null};
 let playerXP=0,playerLevel=0;
 const XP_PER_LEVEL=[7,9,11,13,15,17,19,21,25,30,35,40,45,50,60,70,80,90,100,120];
 function getXPForLevel(lvl){return XP_PER_LEVEL[Math.min(lvl,XP_PER_LEVEL.length-1)];}
 function addXP(amount){playerXP+=amount;while(playerXP>=getXPForLevel(playerLevel)){playerXP-=getXPForLevel(playerLevel);playerLevel++;showGameMsg(`Level Up! Level ${playerLevel}`);}}
-function getArmorDefense(){let def=0;for(const slot of Object.values(playerArmor)){if(slot&&slot.type==='item'){const d=ITEM_DATA[slot.item];if(d&&d.defense)def+=d.defense;}}return def;}
+function getArmorDefense(){let def=0;for(const slot of Object.values(playerArmor)){if(slot&&slot.type==='item'){const d=ITEM_DATA[slot.item];if(d&&d.defense)def+=d.defense;if(slot.enchantments&&slot.enchantments.includes('PROTECTION'))def+=1;}}return def;}
 function isSlotArmor(s){return s&&s.type==='item'&&ITEM_DATA[s.item]?.type==='armor';}
 function showGameMsg(msg){const gm=document.getElementById('game-msg');gm.textContent=msg;gm.style.display='block';setTimeout(()=>{gm.style.display='none';},2000);}
 function isDoorOpen(x,y,z){const b=getBlock(x,y,z);if(b===BLOCK.DOOR_TOP||b===BLOCK.IRON_DOOR_TOP)y--;if(b!==BLOCK.DOOR_BOTTOM&&b!==BLOCK.IRON_DOOR_BOTTOM&&getBlock(x,y,z)!==BLOCK.DOOR_BOTTOM&&getBlock(x,y,z)!==BLOCK.IRON_DOOR_BOTTOM)return false;return doorStates.get(`${x},${y},${z}`)===true;}
 function isBlockSolid(x,y,z){const bx=Math.floor(x),by=Math.floor(y),bz=Math.floor(z);const b=getBlock(bx,by,bz);
-if(SLAB_BLOCKS.has(b)){const fy=y-by;return fy<0.5;}
+if(SLAB_BLOCKS.has(b)){const fy=y-by;const sh=b===BLOCK.SNOW_LAYER?0.125:0.5;return fy<sh;}
 if(!SOLID_BLOCKS_SET.has(b))return false;if(b===BLOCK.DOOR_BOTTOM||b===BLOCK.DOOR_TOP||b===BLOCK.IRON_DOOR_BOTTOM||b===BLOCK.IRON_DOOR_TOP)return!isDoorOpen(bx,by,bz);return true;}
 
 const _isMob='ontouchstart'in window||navigator.maxTouchPoints>1;
@@ -1263,6 +1268,27 @@ for(let y=b*4;y<b*4+4;y++)for(let x=0;x<16;x++){const v=((rng()-0.5)*6)|0;px(img
 pxRect(img,3,3,4,5,160,180,210,160);pxRect(img,9,3,4,5,160,180,210,160);
 for(let x=0;x<16;x++){px(img,x,0,130,130,138);px(img,x,15,130,130,138);}
 for(let y=0;y<16;y++){px(img,0,y,130,130,138);px(img,15,y,130,130,138);}return img;}
+function tex_enchanting_table_top(){const img=new ImageData(16,16);const rng=texRNG(5501);
+pxRect(img,0,0,16,16,40,20,20);
+for(let y=0;y<16;y++)for(let x=0;x<16;x++){const v=((rng()-0.5)*10)|0;px(img,x,y,40+v,20+v,20+v);}
+pxRect(img,2,2,12,12,180,0,0);for(let y=2;y<14;y++)for(let x=2;x<14;x++){const v=((rng()-0.5)*15)|0;px(img,x,y,160+v,10+v,10+v);}
+for(let i=0;i<6;i++){const gx=3+Math.floor(rng()*8),gy=3+Math.floor(rng()*8);px(img,gx,gy,200,180,60);}
+return img;}
+function tex_enchanting_table_side(){const img=new ImageData(16,16);const rng=texRNG(5502);
+pxRect(img,0,0,16,8,40,20,20);for(let y=0;y<8;y++)for(let x=0;x<16;x++){const v=((rng()-0.5)*10)|0;px(img,x,y,40+v,20+v,20+v);}
+pxRect(img,0,8,16,8,20,20,25);for(let y=8;y<16;y++)for(let x=0;x<16;x++){const v=((rng()-0.5)*8)|0;px(img,x,y,20+v,15+v,30+v);}
+pxRect(img,3,0,10,2,70,10,10);for(let i=0;i<3;i++){const gx=4+Math.floor(rng()*6);px(img,gx,1,200,180,60);}
+return img;}
+function tex_enchanting_table_bottom(){return tex_obsidian();}
+function tex_sign(){const img=new ImageData(16,16);const rng=texRNG(5601);
+for(let y=0;y<12;y++)for(let x=0;x<16;x++){const v=((rng()-0.5)*8)|0;px(img,x,y,185+v,155+v,100+v);}
+for(let x=0;x<16;x++){px(img,x,0,140,110,70);px(img,x,11,140,110,70);}
+for(let y=0;y<12;y++){px(img,0,y,140,110,70);px(img,15,y,140,110,70);}
+for(let y=12;y<16;y++){const v=((rng()-0.5)*6)|0;px(img,7,y,130+v,95+v,50+v);px(img,8,y,130+v,95+v,50+v);}
+return img;}
+function tex_snow_layer(){const img=new ImageData(16,16);const rng=texRNG(5701);
+for(let y=0;y<16;y++)for(let x=0;x<16;x++){const v=((rng()-0.5)*10)|0;px(img,x,y,240+v,240+v,250+v);}
+return img;}
 
 const MC_GUI={'hotbar':'data:image/png;base64,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','hotbar_selection':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAXCAMAAAAm/38fAAAA0lBMVEUAAAAEBARfbVyhsp3V6NBgbl1mdGOaq5afsJtebFvY69Pa7dX3+fdbaVhcallVY1KdrpnT5s5WZFOgsZxYZlWis56puqWrvKfP4srR5MxZZ1Zhb15kcmFaaFdndWT////W6dFlc2Ker5pte2qjtJ+ktaCltqGouaRufGuqu6aQoYyVppGuv6rK3cXN4MjO4cmZqpXQ48sAAADS5c2brJfU58+crZjc79fX6tJodmWsvahda1rd8Nje8dni9d329vZUYlH4+vj8/Pz8/vz9/f1icF/cDz9AAAAAAnRSTlMArkf9Q9cAAADTSURBVHhedc9FssRADAPQRHIYhpnnMzMz3f9K3z2z607k5SuVyt51TTx/8fuRv/6IXNxJJpLKuWjoe/43yVuSndOIx72IEXnERCHnBF2MEwB/CAq8AAf7UFgQnpURDcizA+8MDbgN4aoOoHBWCTWNvoFl34GU7erGG58UMhbuxkxBdhvV4w+cV4Nwx4H7rmk0Jw4w2Dz4acNwb6XQOpnZ8LjdiEsbvuKGwpJXLZF0OJIb2STL822DHEQ98nLAJsm1XtwxQGA6HZdAOIcmCXGIduD/AwI4EoJuXPIDAAAAAElFTkSuQmCC','crosshair':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAQAAACR313BAAAAGElEQVR42mOgI/j/n/7S/zHAQDiNjoEMAMWyId+ynq8AAAAAAElFTkSuQmCC','heart_full':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAMklEQVR42mMgCfwXFv4PwshsTAUnToAkMDC6KfgV7cahYDe6lbsJKEAoxK0AUyEDOQAAutFIVzJEk3oAAAAASUVORK5CYII=','heart_half':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAALUlEQVR42mMgCfwXFv4PwvgVnDjxH69CqCR+RbsJK8JUiNfxuwkrQihkIAcAAAyiKyufLIftAAAAAElFTkSuQmCC','heart_container':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAQAAABKmM6bAAAAKUlEQVR42mMAg/9ACCWhAhpACCMhAjAIFSQshKkV2QKEAAIgBBAAIQAAYsk7G5f7aAAAAAAASUVORK5CYII=','food_full':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAASklEQVR42mMgCVzR0vq/SULiP14F9zf2/wfRO1oisCsEmgBXMDfXGbfCRBvp/9WBuiBFYAwSw6cQjInyyKOrq4hT+P/7nf9EBw8AZbUuoVh+TXEAAAAASUVORK5CYII=','food_half':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAQ0lEQVR42mMgGegyMf3Hq+D+ttr/8by8/wkqfHTSFaywpCXiP17rQDg+1xm/aQ420v+rA3XhighZTZzC/6/r/hMdNABMHRvys6npNAAAAABJRU5ErkJggg==','food_empty':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAQAAABKmM6bAAAAKklEQVR42mMAg/9AiAL+awAhRBAhABVECOERxNSMEELYCRHEtBshhOQ+ACpeK/j7CB3bAAAAAElFTkSuQmCC','armor_full':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAQUlEQVR42mOAgv9gDAeYYv+fPf/0f8fOI2BBXGIgDhyj8RGKMrMKEBIIDBJHtRIhiWkK9RWB7EfHcEUoCmEYPYwAajuK4eV7EuQAAAAASUVORK5CYII=','armor_half':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAQ0lEQVR4XmNggID/UIwMUMT+P3v+6f+OnUeQBf/b2tqCMUwMrACGkRWgKMrMKiCoCMU0bFbRQBHIXSCMTxFYIRYMBgD7GGs2F87oDAAAAABJRU5ErkJggg==','armor_empty':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAQAAABKmM6bAAAAK0lEQVR42mMAgv9ACAQI1n9bIAQxESwgBWHaogghIFQrmgDZQlBBEIS5CgAxhkeTgd06XQAAAABJRU5ErkJggg==','xp_bar_bg':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALYAAAAFCAMAAADfcObtAAAAHlBMVEUAAAA2QzwuOjMpNS8oMy0gLCUgKyUZJB4UHxkJEAyp4cejAAAAAXRSTlMAQObYZgAAADVJREFUeNpjYOAcgoCBgZORiRkEmBg5qMxiY6OZ0ZxMDEzMLCDATHXWv380M3qohjbD0EzbAHTwFPOzc5DkAAAAAElFTkSuQmCC','xp_bar_progress':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALYAAAAFCAMAAADfcObtAAACN1BMVEUAAABchTtDaSRMdyksSRVrm0VjkEBOeippmEMIHBFxmlB6sU6BsFuEtF0yUxcWLRpFbCVXiC93rUx9tVBIcSdLdSiGxFeLvmKTyWia0mxlkUAtSylqmURGbSVeiT1ijUBHbyaOwmVlkkFnlUJolkNYijBpmERJcidqmkUuSxVsnUZMdilxpEhxpUl1qkt2oVN3rEwgOA14rk16pldNeClNeSqArlo4XhqCsFuDs1yDs11Tgy1Vhi6KvGJWhy+LvmOLylkiPSKPw2SRxmYWNSSWzWqY0GtajTFllT9mk0FmlEJQfixRfyxSfyxSgSxTfy9TgSxTgS1rnEVTgixtnUVuoEdvoEZvoUlvokhwo0hTgi0zVRlUgi1ypUhypklyp0tzpkpzp0lzp0pzqEt0p0p0qkh1qUxUgyxUgy12qUt2qkt2qkx3olRUhC4gOg14o1V4rkxKdCh5r055sE15sE5WiC8uTBV6sU97s1B8qVh8tFB9tFB9tU8vTxZ+rFh/rVlZizAaPiqBvFNbkDGCsVyCsV2CslyCvVSDslxHbiVdjzUzVRiEwFWGt11eijuHw1aHxFeIuWCIuWGIxleIxliJvGGJx1helDOKyVmLvWKLvWNfiT1fiT6LyVlfiz6MvmONwGSNwmNglzRIcCaPzlyP0V2QxGaRxWdjjj+Rx2djjz+Uy2mVy2mVzGlOeyuXzmpPfCtPfSub1W2f2nCf2nGj3nOo5nep5nau7nqz83209X41VhdOeSpz8AWwAAAAAXRSTlMAQObYZgAAAlBJREFUeF5dk2PTJTEQRm9H42u/tm0ba9u2bdu2bXt/3Hamsre2tj+dOnnyJDWV8XgMn68Hx4djSPIZcpTCcUFKiWpZUhpqdCqndqitSqGXuR61Q2oknNQZilULwt9DFErnlqSlbiPb8NaEiO5L0ejDoaaxtLw2Oo8TwkjGrsfR9bxg1KmIH3jU4pNOMEJgYtCy2gO/KK0IreL8d0NJBg0t3l5ZHWjz0v1XTwet4PiAt+1Q9GB35eTImrU1hC4ZPgtAtQNlGnBdQJmfhQkPhRZOG1cmC7dtFNCANGHO+W5rdyf1RsK6tWKqIPVeQtJDK0EUbGBhqp97UlFesJw9KirdGdx8eaZmeAy4//NzvK4uB1jmi0SOs850ChnEB5udWFfHyD15Z5oHTbNOuqpEIh779PVO05Q337/0xmJ9x2blx23TtB0HWPpAjiNZZ8kWG0tMs7GEtSRer0bXxfuLL9gmUmMmSz7rcxCduwz22b1Vpn00n4349rGrtdW2K7ylD97J4HG+Nem82mF2JExgfODH05uOc/gle37jyhH73sW9gNfOHpoOoMtv/LYzV+RxrtUzTYNbeVx3v3ttdTHnDUij5wt0YaT3HESlFfAzSjGnA+bql3GBLRRzmg4A6ZTU1Iyh2LwoqJH+Ig2E7ha2bckFAJ5NmF/jCNL5M+A26IUkzCKzBWRlLT1Jve3XNi2wrs+IhBn5MJdjOeYIAVHMkQz1tlOPVj07VGk4Pa5SElGR2qGCSiqn4N8cBhBTPa7772fB0yS6zg2q1RS5TqKb9/wBHf6C9PIwD2cAAAAASUVORK5CYII=','air':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAQUlEQVR4XoXQQQ0AIAwEQVSiDDHYQAciDl5bck3KJvfqvNosMXIwxIAJPAEdrC3dgfsEBgJUKMoIWADSPTAD/z8dTfBLkXoccSwAAAAASUVORK5CYII=','air_empty':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAJ0lEQVR42mOgGfgPwzgVOKQ2gLGGhgZOhTAFeBWBJFEUEXQTbbwMAMeGGytB+6AGAAAAAElFTkSuQmCC','steve':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAdVBMVEUAAAAKvLwAzMwmGgokGAgrHg0zJBE/KhW3g2uzeV5SPYn///+qclmbY0mQWT8Af38AaGhVVVWUYD52SzOBUzmPXj5JJRBCHQp3QjVqQDA0JRIoKCg3Nzc/Pz9KSko6MYlBNZtGOqUDenoFiIgElZUApKQAr6/wvakZAAAAAXRSTlMAQObYZgAAAolJREFUeNrt1l1rHucZReFrj/whu5hSCCQtlOTE/f+/Jz4q9Cu0YIhLcFVpVg+FsOCVehi8jmZgWOzZz33DM4CXlum3gH95GgeAzQZVeL4gTm6Cbp4vqFkD8HwBazPY8wWbMq9utu3mNZ5fotVezbzOE3kBEFbaZuc8kb00NTMUbWJp678Xf2GV7RRtx1TDQQ6XBNvsmL2+2vHq1TftmMPIyAWujtN2cl274ua2jpVpZneXEjjo7XW1q53V9ds4ODO5xIuhvGHvfLI3aixauig415uuO2+vl9+cncfsFw25zL650fXn687jqnXuP68/X3+eV3zE7y6u9eB73MlfAcfbTf3yR8CfAX+if8S/H5/EAbAxj5LN48tULvEBOh8V1AageMTXe2YHAOwHbZxrzPkSR3+ffr8TR2JDzE/4Fj8CDgEwDsW+q+9GsR07hhg2CsALBgMo2v5wNxXnQXMeGQVW7gUAyKI2m6KDsJ8Au3++F5RZO+kKNQjQcLLWgjwUjBXLltFgWWMUUlviocBgNoxNGgMjSxiYAA7zgLFo2hgIENiDU8gQCzDOmViGFAsEuBcQSDCothhpJaDRA8E5fHqH2nTbYm5fHLo1V0u3B7DAuheoeScRYabjjjuzs17cHVaTrTXmK78m9swP34d9oK/dfeXSIH2PW/MXwPvxN/bJlxw8zlYAcEyeI6gNgA/O8P8neN8xe1IHP2gTzegjvhUDfuRygmwEs2GE4mkCDIAzm2R4yAuPsIdR9k8AvMc+3L9+2UEjo4WP0FpgP19O0MzCsqxIoMsdDBvYcQyGmO0ZJRoYCKjLJWY0BAhYwGUBCgkh8MRdOKt+ruqMwAB2OcEX94U1TPbYJP0PkyyAI1S6cSIAAAAASUVORK5CYII=','gui_inventory':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEABAMAAACuXLVVAAAAFVBMVEUAAAD////GxsaLi4tVVVU3NzcAAADfJpm/AAAAAXRSTlMAQObYZgAAAV9JREFUeNrt2k1qwkAYgOGs3DulPYDaAzjSG0gvIO4VSu5/hG6SZhGEaZPJ17TPuxokwoNJxs+fpmlrdGuK22xr9FIOuFcBpNs3ALsKHd7LAQkgHvB67Xq7PuhSGXDqem4fdAcAAAD4RYDxtpmXBQwH94sEALB+wH7bFQUYbm3XwDTA8FLmKMDXQwGAHA04hQNyNOAUDsiLAIZt86lfpH339BFgqYmoB+SoU9ADwq+BaMC/3wdW8F5QfyIaABETUeApGO+SyVgOABAOWHYi8i0ZAMDqAeUTUXmzT0TXrkvUKbh0RxwBAAAAAAAA/iRg/GFn3LFf+CcVQOWpeKZF/vFtONMiAQAAAAAAAIQDpk3F0xfJRAQAAAAAAABgIjIRAQAAAAAAAJiI/G4IYCoGAAAAAAAAMBWbCQF253LA5nCuUTmg+agCuJUDNm2NGkmSJEmSJEmSJEmSJEmSJElSaZ+zQHAU0NO5VQAAAABJRU5ErkJggg==','gui_crafting':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEABAMAAACuXLVVAAAAFVBMVEUAAAD////GxsaLi4tVVVU3NzcAAADfJpm/AAAAAXRSTlMAQObYZgAAAS1JREFUeNrt2UtqwzAUhlGNPLdKuwAn2YBEdxC6g8xdKNn/EjoxxeCJglFvHucbaXggD//CKV17NKfmhrFHH6m57y6APN8AmDp0/GoHZAAAAAAAgGnV6bL0uTmU/wHUpffNIQMAAAAAANwf4HRZVSIAdVV+EsBhXHrbHJoB/RdR/EdQogE1HFCiATUcUKIBNQhQ/yrRgBoNKNHfgZf/Fbz8P2H409AiustFZBUHAA7jquxuCAAAAAAQDui/iLw3BAAAAAB4XsDmTr77UG4DbEbA7kMGAAAAAAAAeDDA5k6++5AtIgAAAAAAAACLyCICAAAAAAAAsIi8NwSwigEAAAAAAACsYpsQYDq3A4bjuUftgPTTBTCn5oZrj5IkSZIkSZIkSZIkSZIkSZIkqbVfPPmkNxprcR8AAAAASUVORK5CYII=','gui_furnace':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEABAMAAACuXLVVAAAAFVBMVEUAAAD////GxsaLi4tVVVU3NzcAAADfJpm/AAAAAXRSTlMAQObYZgAAAV1JREFUeNrt3E1Kw0AYgOGsuk9EDzDTXmA+vEHxBt1XkN7/CGINpi7EFDKZWp+3pczyoeTnSwLpulONjt3sNn2NnuYDXqsAhuMVgFSh7ct8wAAAAAAAAJB+ancYK60AMTYAAAAAAADcIGB3uKi0AMRFw70Ccj9WHTC/9oDSGhDrAsr4MxWlNSBWBeTz5zugtAbEmoBIqeTyufyqtAbEeoAcKZcc7f6BXD6+0WAbmAAxAtrsBTlSpBwNjwNnQJMj4QQoubQ7F+QzIG7qbJj+FWC6R/QbwFTcAJD7iwbXhgAAAAAAzQHV7xF5bggAAAAAcOeA6TL8eaFFuRYQY48LLQYAAAAAAACAvwbI/djDQovBRAQAAAAAAABgIjIRAQAAAAAAAJiIPDcEMBUDAAAAAAAAmIrNhABpPx+w2e5rNB/QvVUBXPOSylONOkmSJEmSJEmSJEmSJEmSJEnS3N4BW05pILg82vYAAAAASUVORK5CYII=','gui_chest':'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEABAMAAACuXLVVAAAAFVBMVEUAAAD////GxsaLi4tVVVU3NzcAAADfJpm/AAAAAXRSTlMAQObYZgAAAPVJREFUeNrt3cEJwjAYhuGcem9EB6h1AcUNght4ryDdfwQvGSCB/EjheU85PsePlJKU9oi21Nw0R3RJzX1CAHnrACwBra92QAYAAAAAAPg/4PauPQcd7r2AR+086JABAAAAAAAAjga4zrXToEO2iAAAAAAAAAAsIosIAAAAAAAAwCKyiAAAAAAAAAAsIosIAAAAAAAAwCKyiAAAAAAAAAAsIn/bAQAAAAAAuB8AAAAAAAAAcD9gEQEAAAAAAABYRBYRAAAAAAAAgEXkuyGAVQwAAAAAAABgFduEAEtpB0xrCagDkL4lop7H7faIkiRJkiRJklr7AVfkuLp2xd0lAAAAAElFTkSuQmCC'};
 var MC_GUI_IMGS={};
@@ -1412,7 +1438,9 @@ for(let y=0;y<16;y++)for(let x=0;x<16;x++){const v=((rng()-0.5)*10)|0;px(img,x,y
 'dead_bush':tex_dead_bush,'mushroom_brown':tex_mushroom_brown,'mushroom_red':tex_mushroom_red,
 'fence':tex_fence,'ladder':tex_ladder,'slab_wood':tex_slab_wood,'slab_stone':tex_slab_stone,
 'lever':tex_lever,'pressure_plate':tex_pressure_plate,'iron_door_bottom':tex_iron_door_bottom,'iron_door_top':tex_iron_door_top,
-'birch_side':tex_birch_side,'birch_top':tex_birch_top,'birch_leaves':tex_birch_leaves,'tall_grass_top':tex_tall_grass_top};
+'birch_side':tex_birch_side,'birch_top':tex_birch_top,'birch_leaves':tex_birch_leaves,'tall_grass_top':tex_tall_grass_top,
+'enchanting_table_top':tex_enchanting_table_top,'enchanting_table_side':tex_enchanting_table_side,'enchanting_table_bottom':tex_enchanting_table_bottom,
+'sign':tex_sign,'snow_layer':tex_snow_layer};
 if(g[name])TEX_CACHE[name]=typeof g[name]==='function'?g[name]():g[name];return TEX_CACHE[name];}
 
 function imgToTexture(img){const c=document.createElement('canvas');c.width=c.height=16;c.getContext('2d').putImageData(img,0,0);
@@ -1458,18 +1486,21 @@ const BLOCK_TEX_MAP={
 [BLOCK.IRON_DOOR_TOP]:{top:'iron_door_top',side:'iron_door_top',bottom:'iron_door_top'},
 [BLOCK.BIRCH_WOOD]:{top:'birch_top',side:'birch_side',bottom:'birch_top'},
 [BLOCK.BIRCH_LEAVES]:{top:'birch_leaves',side:'birch_leaves',bottom:'birch_leaves'},
-[BLOCK.TALL_GRASS_TOP]:{top:'tall_grass_top',side:'tall_grass_top',bottom:'tall_grass_top'}};
+[BLOCK.TALL_GRASS_TOP]:{top:'tall_grass_top',side:'tall_grass_top',bottom:'tall_grass_top'},
+[BLOCK.ENCHANTING_TABLE]:{top:'enchanting_table_top',side:'enchanting_table_side',bottom:'enchanting_table_bottom'},
+[BLOCK.SIGN]:{top:'sign',side:'sign',bottom:'sign'},
+[BLOCK.SNOW_LAYER]:{top:'snow_layer',side:'snow_layer',bottom:'snow_layer'}};
 
 const blockMaterials={};
 function buildMaterialsForBlock(bt){const texMap=BLOCK_TEX_MAP[bt];if(!texMap)return;
-const isTr=bt===BLOCK.WATER||bt===BLOCK.GLASS||bt===BLOCK.ICE||bt===BLOCK.LAVA||CROSS_BLOCKS.has(bt);
+const isTr=bt===BLOCK.WATER||bt===BLOCK.GLASS||bt===BLOCK.ICE||bt===BLOCK.LAVA||CROSS_BLOCKS.has(bt)||FLAT_FACE_BLOCKS.has(bt);
 const op=bt===BLOCK.WATER?0.7:bt===BLOCK.GLASS?0.3:bt===BLOCK.ICE?0.75:bt===BLOCK.LAVA?0.9:1;
 const sT=makeTexFromName(texMap.side),tT=makeTexFromName(texMap.top),bT=makeTexFromName(texMap.bottom);
 const o={transparent:isTr,opacity:op,side:CROSS_BLOCKS.has(bt)?THREE.DoubleSide:(isTr?THREE.DoubleSide:THREE.FrontSide),depthWrite:!isTr,alphaTest:CROSS_BLOCKS.has(bt)?0.1:0,vertexColors:true};
 blockMaterials[bt]=[new THREE.MeshLambertMaterial({map:sT,...o}),new THREE.MeshLambertMaterial({map:sT,...o}),
 new THREE.MeshLambertMaterial({map:tT,...o}),new THREE.MeshLambertMaterial({map:bT,...o}),
 new THREE.MeshLambertMaterial({map:sT,...o}),new THREE.MeshLambertMaterial({map:sT,...o})];}
-for(let bt=1;bt<=51;bt++)buildMaterialsForBlock(bt);
+for(let bt=1;bt<=55;bt++)buildMaterialsForBlock(bt);
 if(blockMaterials[BLOCK.LAVA])blockMaterials[BLOCK.LAVA].forEach(m=>{m.emissive=new THREE.Color(0xff4400);m.emissiveIntensity=0.8;});
 if(blockMaterials[BLOCK.GLOWSTONE])blockMaterials[BLOCK.GLOWSTONE].forEach(m=>{m.emissive=new THREE.Color(0xddaa40);m.emissiveIntensity=0.6;});
 if(blockMaterials[BLOCK.TORCH])blockMaterials[BLOCK.TORCH].forEach(m=>{m.emissive=new THREE.Color(0xffaa22);m.emissiveIntensity=0.5;});
@@ -1574,7 +1605,9 @@ else if(y<6&&Math.random()<0.008)world[i]=BLOCK.LAVA;
 else{if(h<=SEA_LEVEL+1)world[i]=BLOCK.SAND;
 else if(biome===BIOME.SNOW)world[i]=BLOCK.SNOW;
 else world[i]=BLOCK.GRASS;}}}
-if(biome===BIOME.SNOW&&getTerrainHeight(x,z)<SEA_LEVEL){const wi=idx(x,SEA_LEVEL,z);if(wi>=0&&world[wi]===BLOCK.WATER)world[wi]=BLOCK.ICE;}}
+if(biome===BIOME.SNOW){
+if(getTerrainHeight(x,z)<SEA_LEVEL){const wi=idx(x,SEA_LEVEL,z);if(wi>=0&&world[wi]===BLOCK.WATER)world[wi]=BLOCK.ICE;}
+else{const th=getTerrainHeight(x,z);if(th+1<WORLD_HEIGHT&&th>SEA_LEVEL){const si=idx(x,th+1,z);if(si>=0&&world[si]===BLOCK.AIR)world[si]=BLOCK.SNOW_LAYER;}}}}
 for(let x=0;x<WORLD_SIZE;x++)for(let z=0;z<WORLD_SIZE;z++){const sH=getTerrainHeight(x,z);
 for(let y=2;y<sH-1;y++){const c1=noiseC.octave3D(x,y,z,3,0.5,2,0.05),c2=noise.octave3D(x,y*1.3,z,3,0.5,2,0.07);
 const c3=noiseB.octave3D(x*0.8,y*0.6,z*0.8,2,0.5,2,0.04);
@@ -1723,6 +1756,25 @@ if(chunkMeshes[key]){chunkMeshes[key].forEach(m=>{chunkGroup.remove(m);m.geometr
 const facesByMat={};const sx=cx*CHUNK_SIZE,sz=cz*CHUNK_SIZE;
 for(let x=sx;x<sx+CHUNK_SIZE;x++)for(let z=sz;z<sz+CHUNK_SIZE;z++)for(let y=0;y<WORLD_HEIGHT;y++){
 const block=getBlock(x,y,z);if(block===BLOCK.AIR)continue;
+if(FLAT_FACE_BLOCKS.has(block)){const mk=`${block}_cross`;if(!facesByMat[mk])facesByMat[mk]={positions:[],normals:[],uvs:[],indices:[],isCross:true,block,colors:[]};
+const b=facesByMat[mk];const o=0.05;
+const flatFaces=[
+{check:[0,0,-1],corners:[[0,0,o],[1,0,o],[1,1,o],[0,1,o]],normal:[0,0,1]},
+{check:[0,0,1],corners:[[1,0,1-o],[0,0,1-o],[0,1,1-o],[1,1,1-o]],normal:[0,0,-1]},
+{check:[-1,0,0],corners:[[o,0,1],[o,0,0],[o,1,0],[o,1,1]],normal:[1,0,0]},
+{check:[1,0,0],corners:[[1-o,0,0],[1-o,0,1],[1-o,1,1],[1-o,1,0]],normal:[-1,0,0]}];
+let placed=false;for(const ff of flatFaces){const cx2=x+ff.check[0],cz2=z+ff.check[2];
+if(isBlockSolid(cx2,y,cz2)){const vi=b.positions.length/3;
+for(const c of ff.corners){b.positions.push(x+c[0],y+c[1],z+c[2]);b.normals.push(ff.normal[0],ff.normal[1],ff.normal[2]);b.colors.push(0.9,0.9,0.9);}
+b.uvs.push(0,0,1,0,1,1,0,1);b.indices.push(vi,vi+1,vi+2,vi,vi+2,vi+3);
+const vi2=b.positions.length/3;
+for(let i=ff.corners.length-1;i>=0;i--){const c=ff.corners[i];b.positions.push(x+c[0],y+c[1],z+c[2]);b.normals.push(-ff.normal[0],-ff.normal[1],-ff.normal[2]);b.colors.push(0.9,0.9,0.9);}
+b.uvs.push(0,1,1,1,1,0,0,0);b.indices.push(vi2,vi2+1,vi2+2,vi2,vi2+2,vi2+3);
+placed=true;break;}}
+if(!placed){const vi=b.positions.length/3;const ff=flatFaces[0];
+for(const c of ff.corners){b.positions.push(x+c[0],y+c[1],z+c[2]);b.normals.push(ff.normal[0],ff.normal[1],ff.normal[2]);b.colors.push(0.9,0.9,0.9);}
+b.uvs.push(0,0,1,0,1,1,0,1);b.indices.push(vi,vi+1,vi+2,vi,vi+2,vi+3);}
+continue;}
 if(CROSS_BLOCKS.has(block)){const mk=`${block}_cross`;if(!facesByMat[mk])facesByMat[mk]={positions:[],normals:[],uvs:[],indices:[],isCross:true,block};
 const b=facesByMat[mk];
 if(!b.colors)b.colors=[];
@@ -1749,7 +1801,7 @@ let adjAir=0;const dirs2=[[cx2,y,z],[x,y,cz2],[cx2,y,cz2]];
 for(const d of dirs2){const ab=getBlock(d[0],d[1],d[2]);if(ab===BLOCK.AIR||ab===0)adjAir++;
 const below=getBlock(d[0],d[1]-1,d[2]);if(below===BLOCK.AIR||below===0)adjAir++;}
 cy=adjAir>2?0.75:adjAir>0?0.8125:0.875;}}if(block===BLOCK.BED&&cy===1)cy=0.45;
-if(isSlab&&cy===1)cy=0.5;
+if(isSlab&&cy===1)cy=block===BLOCK.SNOW_LAYER?0.125:0.5;
 b.positions.push(x+c[0],y+cy,z+c[2]);b.normals.push(f.dir[0],f.dir[1],f.dir[2]);
 const ao=_vertexAO(fi,c,x,y,z);const vb=ao*faceBr*underground;b.colors.push(vb,vb,vb);}
 if(fi===0||fi===1)b.uvs.push(0,0,0,1,1,1,1,0);else b.uvs.push(0,0,1,0,1,1,0,1);
@@ -1824,7 +1876,7 @@ const breakingState={active:false,x:0,y:0,z:0,block:0,progress:0,hardness:0,mous
 function resetBreaking(){breakingState.active=false;breakingState.progress=0;crackMesh.visible=false;crackMesh.material.opacity=0;}
 
 function updateBreaking(dt){
-if(!breakingState.mouseDown||!isLocked||inventoryOpen||craftingOpen||chestOpen||furnaceOpen||tradeOpen||player.isDead){if(breakingState.active)resetBreaking();return;}
+if(!breakingState.mouseDown||!isLocked||inventoryOpen||craftingOpen||chestOpen||furnaceOpen||tradeOpen||enchantOpen||player.isDead){if(breakingState.active)resetBreaking();return;}
 const currentSlot=hotbarSlots[player.selectedSlot];if(isSlotSword(currentSlot))return;
 let hit;if(mobileTouchRayOverride){hit=mobileTouchRayOverride;}else{const dir=getForwardDir();hit=raycast(camera.position,dir,REACH);}
 if(!hit){if(breakingState.active)resetBreaking();return;}
@@ -1858,6 +1910,7 @@ if(bt===BLOCK.IRON_DOOR_TOP){setBlock(bx,by-1,bz,BLOCK.AIR);doorStates.delete(`$
 if(bt===BLOCK.LEVER)leverStates.delete(`${bx},${by},${bz}`);
 if(bt===BLOCK.CHEST)chestInventories.delete(`${bx},${by},${bz}`);
 if(bt===BLOCK.FURNACE)furnaceInventories.delete(`${bx},${by},${bz}`);
+if(bt===BLOCK.SIGN)signTexts.delete(`${bx},${by},${bz}`);
 setBlock(bx,by,bz,BLOCK.AIR);spawnParticles(bx,by,bz,bt);playSound('break');playerStats.blocksbroken++;resetBreaking();}}
 
 let audioCtx;function initAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();}
@@ -2215,7 +2268,7 @@ const allBlocks=[BLOCK.GRASS,BLOCK.DIRT,BLOCK.STONE,BLOCK.WOOD,BLOCK.PLANKS,BLOC
 BLOCK.SAND,BLOCK.SNOW,BLOCK.ICE,BLOCK.BRICK,BLOCK.LEAVES,BLOCK.BOOKSHELF,BLOCK.MOSSY_COBBLESTONE,BLOCK.GRAVEL,BLOCK.CLAY,
 BLOCK.COAL_ORE,BLOCK.IRON_ORE,BLOCK.GOLD_ORE,BLOCK.DIAMOND_ORE,BLOCK.REDSTONE_ORE,BLOCK.OBSIDIAN,BLOCK.LAVA,BLOCK.GLOWSTONE,BLOCK.NETHERRACK,
 BLOCK.WATER,BLOCK.WOOL,BLOCK.BED,BLOCK.DOOR_BOTTOM,BLOCK.CHEST,BLOCK.FURNACE,BLOCK.BEDROCK,BLOCK.RED_FLOWER,BLOCK.YELLOW_FLOWER,
-BLOCK.SANDSTONE,BLOCK.CACTUS,BLOCK.DEAD_BUSH,BLOCK.MUSHROOM_BROWN,BLOCK.MUSHROOM_RED,BLOCK.FENCE,BLOCK.LADDER,BLOCK.SLAB_WOOD,BLOCK.SLAB_STONE,BLOCK.LEVER,BLOCK.PRESSURE_PLATE,BLOCK.IRON_DOOR_BOTTOM];
+BLOCK.SANDSTONE,BLOCK.CACTUS,BLOCK.DEAD_BUSH,BLOCK.MUSHROOM_BROWN,BLOCK.MUSHROOM_RED,BLOCK.FENCE,BLOCK.LADDER,BLOCK.SLAB_WOOD,BLOCK.SLAB_STONE,BLOCK.LEVER,BLOCK.PRESSURE_PLATE,BLOCK.IRON_DOOR_BOTTOM,BLOCK.ENCHANTING_TABLE,BLOCK.SIGN,BLOCK.SNOW_LAYER];
 const pages=[];
 for(let i=0;i<allBlocks.length;i+=9){
 const page=[];for(let j=i;j<i+9&&j<allBlocks.length;j++){
@@ -2235,16 +2288,18 @@ hotbarPage=0;hotbarSlots=HOTBAR_PAGES[0].map(s=>s?{...s}:null);}
 
 function getSlotTooltip(slot){if(!slot)return'Empty';let tip=getSlotName(slot);
 if(slot.type==='item'){const d=ITEM_DATA[slot.item];
-if(d){if(d.damage)tip+='\n⚔ Damage: '+d.damage;if(d.defense)tip+='\n🛡 Defense: '+d.defense;
+if(d){if(d.damage){let dmg=d.damage;if(slot.enchantments&&slot.enchantments.includes('SHARPNESS'))dmg+=2;tip+='\n⚔ Damage: '+dmg;}
+if(d.defense){let def=d.defense;if(slot.enchantments&&slot.enchantments.includes('PROTECTION'))def+=1;tip+='\n🛡 Defense: '+def;}
 if(d.hunger)tip+='\n🍗 Hunger: +'+d.hunger;if(d.tier)tip+='\n⛏ Tier: '+d.tier;
-if(d.type)tip+='\nType: '+d.type.charAt(0).toUpperCase()+d.type.slice(1);}}return tip;}
+if(d.type)tip+='\nType: '+d.type.charAt(0).toUpperCase()+d.type.slice(1);}
+if(slot.enchantments&&slot.enchantments.length>0)tip+='\n✨ '+slot.enchantments.map(k=>ENCHANTMENTS[k]?.name||k).join(', ');}return tip;}
 
 let inventoryOpen=false;const invOverlay=document.getElementById('inventory-overlay');const invGrid=document.getElementById('inv-grid');
 const ALL_BLOCKS=[BLOCK.GRASS,BLOCK.DIRT,BLOCK.STONE,BLOCK.WOOD,BLOCK.SAND,BLOCK.COBBLESTONE,BLOCK.PLANKS,BLOCK.BRICK,BLOCK.GLASS,BLOCK.LEAVES,
 BLOCK.SNOW,BLOCK.COAL_ORE,BLOCK.IRON_ORE,BLOCK.GOLD_ORE,BLOCK.DIAMOND_ORE,BLOCK.BEDROCK,BLOCK.GRAVEL,BLOCK.CLAY,BLOCK.OBSIDIAN,BLOCK.TNT,
 BLOCK.WATER,BLOCK.TORCH,BLOCK.ICE,BLOCK.BOOKSHELF,BLOCK.MOSSY_COBBLESTONE,BLOCK.LAVA,BLOCK.GLOWSTONE,BLOCK.NETHERRACK,BLOCK.REDSTONE_ORE,
 BLOCK.DOOR_BOTTOM,BLOCK.CHEST,BLOCK.WOOL,BLOCK.BED,BLOCK.FURNACE,BLOCK.SANDSTONE,BLOCK.CACTUS,BLOCK.DEAD_BUSH,BLOCK.MUSHROOM_BROWN,BLOCK.MUSHROOM_RED,
-BLOCK.FENCE,BLOCK.LADDER,BLOCK.SLAB_WOOD,BLOCK.SLAB_STONE,BLOCK.LEVER,BLOCK.PRESSURE_PLATE,BLOCK.IRON_DOOR_BOTTOM];
+BLOCK.FENCE,BLOCK.LADDER,BLOCK.SLAB_WOOD,BLOCK.SLAB_STONE,BLOCK.LEVER,BLOCK.PRESSURE_PLATE,BLOCK.IRON_DOOR_BOTTOM,BLOCK.ENCHANTING_TABLE];
 const ALL_ITEMS=[ITEM.STICK,ITEM.WOODEN_SWORD,ITEM.STONE_SWORD,ITEM.IRON_SWORD,ITEM.DIAMOND_SWORD,
 ITEM.WOODEN_PICKAXE,ITEM.STONE_PICKAXE,ITEM.IRON_PICKAXE,ITEM.DIAMOND_PICKAXE,
 ITEM.WOODEN_AXE,ITEM.STONE_AXE,ITEM.IRON_AXE,ITEM.DIAMOND_AXE,
@@ -2445,6 +2500,7 @@ const RECIPES=[
 {inputs:[{type:'block',block:BLOCK.PLANKS,count:6}],output:{type:'block',block:BLOCK.BOOKSHELF,count:1},name:'Bookshelf',cat:'Blocks'},
 {inputs:[{type:'item',item:ITEM.STICK,count:4},{type:'block',block:BLOCK.PLANKS,count:2}],output:{type:'block',block:BLOCK.FENCE,count:3},name:'Fence',cat:'Blocks'},
 {inputs:[{type:'item',item:ITEM.STICK,count:7}],output:{type:'block',block:BLOCK.LADDER,count:3},name:'Ladder',cat:'Blocks'},
+{inputs:[{type:'block',block:BLOCK.PLANKS,count:6},{type:'item',item:ITEM.STICK,count:1}],output:{type:'block',block:BLOCK.SIGN,count:3},name:'Sign',cat:'Blocks'},
 {inputs:[{type:'block',block:BLOCK.PLANKS,count:3}],output:{type:'block',block:BLOCK.SLAB_WOOD,count:6},name:'Wood Slab',cat:'Blocks'},
 {inputs:[{type:'block',block:BLOCK.STONE,count:3}],output:{type:'block',block:BLOCK.SLAB_STONE,count:6},name:'Stone Slab',cat:'Blocks'},
 {inputs:[{type:'item',item:ITEM.WOOL,count:4}],output:{type:'block',block:BLOCK.WOOL,count:1},name:'Wool Block',cat:'Blocks'},
@@ -2481,7 +2537,8 @@ const RECIPES=[
 {inputs:[{type:'item',item:ITEM.STICK,count:1},{type:'block',block:BLOCK.COBBLESTONE,count:1}],output:{type:'block',block:BLOCK.LEVER,count:1},name:'Lever',cat:'Blocks'},
 {inputs:[{type:'block',block:BLOCK.STONE,count:2}],output:{type:'block',block:BLOCK.PRESSURE_PLATE,count:1},name:'Pressure Plate',cat:'Blocks'},
 {inputs:[{type:'item',item:ITEM.IRON_INGOT,count:2}],output:{type:'block',block:BLOCK.IRON_DOOR_BOTTOM,count:1},name:'Iron Door',cat:'Blocks'},
-{inputs:[{type:'item',item:ITEM.STICK,count:3},{type:'item',item:ITEM.STRING,count:2}],output:{type:'item',item:ITEM.FISHING_ROD,count:1},name:'Fishing Rod',cat:'Tools'}];
+{inputs:[{type:'item',item:ITEM.STICK,count:3},{type:'item',item:ITEM.STRING,count:2}],output:{type:'item',item:ITEM.FISHING_ROD,count:1},name:'Fishing Rod',cat:'Tools'},
+{inputs:[{type:'block',block:BLOCK.OBSIDIAN,count:4},{type:'item',item:ITEM.DIAMOND,count:2},{type:'block',block:BLOCK.BOOKSHELF,count:1}],output:{type:'block',block:BLOCK.ENCHANTING_TABLE,count:1},name:'Enchanting Table',cat:'Blocks'}];
 
 const CRAFT_CATEGORIES=['All','Tools','Blocks','Combat','Misc'];
 
@@ -3011,14 +3068,50 @@ o.connect(f).connect(g).connect(ctx.destination);o.start(now);o.stop(now+0.35);}
 
 function updateVillagers(dt){
 for(const v of villagers){
-// Wander slowly
+// Initialize AI state
+if(v.aiState===undefined){v.aiState='wander';v.pauseTimer=0;v.fleeTimer=0;v.socialTimer=5+Math.random()*10;v.lookTimer=0;}
+// Flee from nearby zombies
+let fleeing=false;
+for(const z of zombies){
+const zdx=z.x-v.x,zdz=z.z-v.z,zd=Math.sqrt(zdx*zdx+zdz*zdz);
+if(zd<10){fleeing=true;v.aiState='flee';v.wanderAngle=Math.atan2(v.z-z.z,v.x-z.x);v.fleeTimer=2;break;}}
+if(v.fleeTimer>0){v.fleeTimer-=dt;if(v.fleeTimer<=0&&v.aiState==='flee')v.aiState='wander';}
+// Night shelter seeking: move toward nearby doors/structures
+if(!isDaytime()&&!fleeing&&v.aiState!=='flee'){
+if(v.aiState!=='shelter'){v.aiState='shelter';v.shelterAngle=v.wanderAngle;}
+let foundDoor=false;
+for(let ox=-8;ox<=8&&!foundDoor;ox+=2)for(let oz=-8;oz<=8&&!foundDoor;oz+=2){
+const cx=Math.floor(v.x)+ox,cz=Math.floor(v.z)+oz,cy=Math.floor(v.y);
+if(cx>=0&&cx<WORLD_SIZE&&cz>=0&&cz<WORLD_SIZE){
+const bl=getBlock(cx,cy,cz);
+if(bl===BLOCK.DOOR_BOTTOM||bl===BLOCK.IRON_DOOR_BOTTOM){
+v.wanderAngle=Math.atan2(cz+0.5-v.z,cx+0.5-v.x);foundDoor=true;}}}
+}else if(isDaytime()&&v.aiState==='shelter'){v.aiState='wander';}
+// Socialize: walk toward other villagers occasionally
+v.socialTimer-=dt;
+if(v.socialTimer<=0&&v.aiState==='wander'&&villagers.length>1){
+v.socialTimer=8+Math.random()*15;
+const others=villagers.filter(o=>o!==v);
+if(others.length>0){const target=others[Math.floor(Math.random()*others.length)];
+const sdx=target.x-v.x,sdz=target.z-v.z,sd=Math.sqrt(sdx*sdx+sdz*sdz);
+if(sd<20&&sd>2){v.wanderAngle=Math.atan2(sdz,sdx);v.wanderTimer=1+Math.random()*2;}}}
+// Pause to look around
+v.pauseTimer-=dt;
+if(v.pauseTimer<=0&&v.aiState==='wander'&&Math.random()<0.02){
+v.aiState='looking';v.lookTimer=1.5+Math.random()*2;v.pauseTimer=8+Math.random()*12;}
+if(v.aiState==='looking'){v.lookTimer-=dt;
+v.mesh.rotation.y+=dt*1.5;
+if(v.lookTimer<=0){v.aiState='wander';v.wanderAngle=Math.random()*Math.PI*2;v.wanderTimer=2+Math.random()*4;}}
+// Wander movement
+const isMoving=v.aiState!=='looking';
 v.wanderTimer-=dt;if(v.wanderTimer<=0){v.wanderAngle=Math.random()*Math.PI*2;v.wanderTimer=3+Math.random()*6;}
-const spd=0.5;
+const spd=v.aiState==='flee'?1.8:0.5;
+if(isMoving){
 const nx=v.x+Math.cos(v.wanderAngle)*spd*dt,nz=v.z+Math.sin(v.wanderAngle)*spd*dt;
 if(!isBlockSolid(Math.floor(nx),Math.floor(v.y),Math.floor(nz))&&
 isBlockSolid(Math.floor(nx),Math.floor(v.y)-1,Math.floor(nz))){v.x=nx;v.z=nz;}
 else{v.wanderAngle=Math.random()*Math.PI*2;}
-v.mesh.rotation.y=v.wanderAngle+Math.PI;
+v.mesh.rotation.y=v.wanderAngle+Math.PI;}
 // Gravity
 v.vy-=GRAVITY*dt;v.y+=v.vy*dt;
 const by=Math.floor(v.y);if(by>=0&&isBlockSolid(Math.floor(v.x),by,Math.floor(v.z))){v.y=by+1;v.vy=0;}
@@ -3027,8 +3120,9 @@ v.x=Math.max(1,Math.min(WORLD_SIZE-2,v.x));v.z=Math.max(1,Math.min(WORLD_SIZE-2,
 v.mesh.position.set(v.x,v.y,v.z);
 // Leg animation
 const t=performance.now()/1000;
-if(v.mesh.children[8])v.mesh.children[8].rotation.x=Math.sin(t*2)*0.2;
-if(v.mesh.children[9])v.mesh.children[9].rotation.x=Math.sin(t*2+Math.PI)*0.2;
+const legSpeed=isMoving?(v.aiState==='flee'?4:2):0;
+if(v.mesh.children[8])v.mesh.children[8].rotation.x=isMoving?Math.sin(t*legSpeed)*0.3:0;
+if(v.mesh.children[9])v.mesh.children[9].rotation.x=isMoving?Math.sin(t*legSpeed+Math.PI)*0.3:0;
 // Hmm sounds
 v.hmmTimer-=dt;if(v.hmmTimer<=0){v.hmmTimer=8+Math.random()*20;
 const dx=player.position.x-v.x,dz2=player.position.z-v.z;
@@ -3094,6 +3188,92 @@ list.appendChild(row);}}
 var closeTrade=function(){tradeOpen=false;tradeVillager=null;
 document.getElementById('trade-overlay').style.display='none';
 if(!_isMob)renderer.domElement.requestPointerLock();else isLocked=true;};
+
+// ═══════════════════════════════════════
+// ENCHANTING TABLE SYSTEM
+// ═══════════════════════════════════════
+let enchantOpen=false;
+const ENCHANTMENTS={
+SHARPNESS:{name:'Sharpness',desc:'+2 attack damage',applies:['sword'],cost:2},
+PROTECTION:{name:'Protection',desc:'+1 armor defense',applies:['armor'],cost:2},
+EFFICIENCY:{name:'Efficiency',desc:'+50% mining speed',applies:['pickaxe','axe','shovel'],cost:1},
+UNBREAKING:{name:'Unbreaking',desc:'Slower durability loss',applies:['sword','pickaxe','axe','shovel','armor'],cost:3}
+};
+function canEnchantSlot(slot){
+if(!slot||slot.type!=='item')return false;
+const d=ITEM_DATA[slot.item];if(!d)return false;
+return d.type==='sword'||d.type==='pickaxe'||d.type==='axe'||d.type==='shovel'||d.type==='armor';
+}
+function getAvailableEnchantments(slot){
+if(!slot||slot.type!=='item')return[];
+const d=ITEM_DATA[slot.item];if(!d)return[];
+const existing=slot.enchantments||[];
+const result=[];
+for(const[key,ench]of Object.entries(ENCHANTMENTS)){
+if(existing.includes(key))continue;
+let applies=false;
+if(ench.applies.includes(d.type))applies=true;
+if(applies)result.push({key,ench});
+}
+return result;
+}
+function openEnchantUI(){
+enchantOpen=true;
+document.getElementById('enchant-overlay').style.display='flex';
+if(!_isMob)document.exitPointerLock();
+renderEnchantUI();
+}
+function renderEnchantUI(){
+const infoEl=document.getElementById('enchant-item-info');
+const listEl=document.getElementById('enchant-list');
+document.getElementById('enchant-level-display').textContent=playerLevel;
+listEl.innerHTML='';
+const slot=hotbarSlots[player.selectedSlot];
+if(!canEnchantSlot(slot)){
+infoEl.innerHTML='<span style="color:#f88">Hold a tool, weapon, or armor piece and select it in hotbar</span>';
+return;
+}
+const d=ITEM_DATA[slot.item];
+const enchNames=(slot.enchantments||[]).map(k=>ENCHANTMENTS[k]?.name||k);
+infoEl.innerHTML='<span style="color:#aef">'+d.name+(enchNames.length?' <span style="color:#b48eff">['+enchNames.join(', ')+']</span>':'')+'</span>';
+const available=getAvailableEnchantments(slot);
+if(available.length===0){
+listEl.innerHTML='<div style="text-align:center;color:#888;padding:10px">No enchantments available</div>';
+return;
+}
+for(const{key,ench}of available){
+const row=document.createElement('div');
+row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:#2a1a4e;border-radius:5px;border:1px solid #4a2a8e';
+const canAfford=playerLevel>=ench.cost;
+const left=document.createElement('div');
+left.innerHTML='<div style="color:'+(canAfford?'#b48eff':'#666')+'">'+ench.name+'</div><div style="font-size:10px;color:#888">'+ench.desc+'</div>';
+row.appendChild(left);
+const btn=document.createElement('button');
+btn.textContent=ench.cost+' Lvl';
+btn.style.cssText='padding:4px 12px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:bold;'+(canAfford?'background:#4a2;color:#fff':'background:#333;color:#666;cursor:not-allowed');
+if(canAfford)btn.onclick=()=>{applyEnchantment(key);};
+row.appendChild(btn);
+listEl.appendChild(row);
+}
+}
+function applyEnchantment(enchKey){
+const slot=hotbarSlots[player.selectedSlot];
+if(!slot)return;
+const ench=ENCHANTMENTS[enchKey];if(!ench)return;
+if(playerLevel<ench.cost)return;
+if(!slot.enchantments)slot.enchantments=[];
+if(slot.enchantments.includes(enchKey))return;
+slot.enchantments.push(enchKey);
+playerLevel-=ench.cost;
+playSound('levelup');
+showGameMsg('✨ Applied '+ench.name+'!');
+renderEnchantUI();renderHotbar();
+}
+function closeEnchantUI(){
+enchantOpen=false;
+document.getElementById('enchant-overlay').style.display='none';
+if(!_isMob)renderer.domElement.requestPointerLock();else isLocked=true;
+}
 
 function findVillagerAtRay(){
 const dir=getForwardDir();
@@ -3166,6 +3346,25 @@ scene.remove(p);p.geometry.dispose();p.material.dispose();weatherParticles.splic
 for(let i=rainSplashes.length-1;i>=0;i--){const s=rainSplashes[i];s.userData.life-=dt;
 s.material.opacity=Math.max(0,s.userData.life/0.3*0.5);s.scale.setScalar(1+(0.3-s.userData.life)*3);
 if(s.userData.life<=0){scene.remove(s);s.geometry.dispose();s.material.dispose();rainSplashes.splice(i,1);}}}
+
+// Snow accumulation during snow weather
+let snowAccumTimer=0;
+function updateSnowAccumulation(dt){
+if(weatherState!=='snow'){snowAccumTimer=0;return;}
+snowAccumTimer+=dt;if(snowAccumTimer<8)return;snowAccumTimer=0;
+const px2=Math.floor(player.position.x),pz2=Math.floor(player.position.z);
+const r=12;
+for(let i=0;i<3;i++){
+const sx=px2+Math.floor(Math.random()*r*2)-r,sz=pz2+Math.floor(Math.random()*r*2)-r;
+if(sx<0||sx>=WORLD_SIZE||sz<0||sz>=WORLD_SIZE)continue;
+const b=getBiome(sx,sz);if(b!==BIOME.SNOW)continue;
+for(let y=WORLD_HEIGHT-1;y>=0;y--){const bl=getBlock(sx,y,sz);
+if(bl===BLOCK.AIR||bl===BLOCK.SNOW_LAYER)continue;
+if(bl===BLOCK.WATER||bl===BLOCK.LAVA)break;
+const ay=y+1;if(ay>=WORLD_HEIGHT)break;
+const above=getBlock(sx,ay,sz);
+if(above===BLOCK.AIR){setBlock(sx,ay,sz,BLOCK.SNOW_LAYER);break;}
+break;}}}
 
 // ═══════════════════════════════════════
 // XP ORBS
@@ -3380,7 +3579,7 @@ document.addEventListener('mousemove',e=>{if(cursorSlot){cursorEl.style.left=(e.
 // ═══════════════════════════════════════
 // SAVE / LOAD SYSTEM
 // ═══════════════════════════════════════
-const SAVE_KEY='voxelcraft_save';let autoSaveTimer=60;
+const SAVE_KEY='rfcraft_save';let autoSaveTimer=60;
 
 function _encodeWorldData(arr){const chunks=[];const CHUNK=8192;
 for(let i=0;i<arr.length;i+=CHUNK){const end=Math.min(i+CHUNK,arr.length);
@@ -3400,12 +3599,13 @@ stats:playerStats,dayTime:dayTime,
 weatherState,weatherTimer,bedSpawnPoint,
 furnaceInventories:Array.from(furnaceInventories.entries()),
 leverStates:Array.from(leverStates.entries()),
+signTexts:Array.from(signTexts.entries()),
 playerArmor,playerXP,playerLevel,
 gameMode:gameMode,worldName:worldName,isFlying:isFlying,
 villagers:villagers.map(v=>({x:v.x,y:v.y,z:v.z,health:v.health,trades:v.trades}))};
 const json=JSON.stringify(data);
 localStorage.setItem(SAVE_KEY,json);
-localStorage.setItem('voxelcraft_seeds',JSON.stringify(data.seeds));
+localStorage.setItem('rfcraft_seeds',JSON.stringify(data.seeds));
 }catch(e){console.warn('Save failed:',e);
 if(e.name==='QuotaExceededError'){try{localStorage.removeItem(SAVE_KEY);
 localStorage.setItem(SAVE_KEY,JSON.stringify({seeds:{a:worldSeed,b:worldSeedB,c:worldSeedC},
@@ -3435,6 +3635,7 @@ if(data.weatherTimer!==undefined)weatherTimer=data.weatherTimer;
 if(data.bedSpawnPoint)bedSpawnPoint=data.bedSpawnPoint;
 if(data.furnaceInventories){furnaceInventories.clear();for(const[k,v]of data.furnaceInventories)furnaceInventories.set(k,v);}
 if(data.leverStates){leverStates.clear();for(const[k,v]of data.leverStates)leverStates.set(k,v);}
+if(data.signTexts){signTexts.clear();for(const[k,v]of data.signTexts)signTexts.set(k,v);}
 if(data.playerArmor)Object.assign(playerArmor,data.playerArmor);
 if(data.playerXP!==undefined)playerXP=data.playerXP;
 if(data.playerLevel!==undefined)playerLevel=data.playerLevel;
@@ -3450,7 +3651,7 @@ return true;}catch(e){console.warn('Load failed:',e);return false;}}
 
 function newWorld(){
 _skipSaveOnUnload=true;
-localStorage.removeItem(SAVE_KEY);localStorage.removeItem('voxelcraft_seeds');
+localStorage.removeItem(SAVE_KEY);localStorage.removeItem('rfcraft_seeds');
 location.reload();}
 
 var _wcMode='survival';
@@ -3471,10 +3672,10 @@ var createWorldFromPanel=function(){startNewWorld(_wcMode);};
 var _skipSaveOnUnload=false;
 var startNewWorld=function(mode){
 _skipSaveOnUnload=true;
-localStorage.removeItem(SAVE_KEY);localStorage.removeItem('voxelcraft_seeds');
+localStorage.removeItem(SAVE_KEY);localStorage.removeItem('rfcraft_seeds');
 var wn=document.getElementById('world-name-input').value.trim()||'My World';
-localStorage.setItem('voxelcraft_pending_mode',mode);
-localStorage.setItem('voxelcraft_pending_name',wn);
+localStorage.setItem('rfcraft_pending_mode',mode);
+localStorage.setItem('rfcraft_pending_name',wn);
 location.reload();};
 
 // Set dirt background on title screen and splash text
@@ -3701,6 +3902,11 @@ if(hit.block===BLOCK.LEVER){toggleLever(hit.x,hit.y,hit.z);return;}
 if(hit.block===BLOCK.CHEST){openChestUI(hit.x,hit.y,hit.z);return;}
 // Furnace interaction
 if(hit.block===BLOCK.FURNACE){openFurnaceUI(hit.x,hit.y,hit.z);return;}
+// Enchanting table interaction
+if(hit.block===BLOCK.ENCHANTING_TABLE){openEnchantUI();return;}
+// Sign interaction - read text
+if(hit.block===BLOCK.SIGN){const key=`${hit.x},${hit.y},${hit.z}`;const txt=signTexts.get(key);
+showGameMsg(txt?'📜 '+txt.replace(/\n/g,' | '):'Empty sign');return;}
 // Armor equip on right-click
 if(currentSlot&&isSlotArmor(currentSlot)){const ad=ITEM_DATA[currentSlot.item];const slot=ad.slot;
 const old=playerArmor[slot];playerArmor[slot]=currentSlot;hotbarSlots[player.selectedSlot]=old;renderHotbar();return;}
@@ -3718,6 +3924,8 @@ setBlock(px2,py,pz,BLOCK.IRON_DOOR_BOTTOM);setBlock(px2,py+1,pz,BLOCK.IRON_DOOR_
 }else{setBlock(px2,py,pz,currentSlot.block);}
 if(currentSlot.block===BLOCK.TORCH)addTorchLight(px2,py,pz);
 if(currentSlot.block===BLOCK.LAVA)addLavaLight(px2,py,pz);
+if(currentSlot.block===BLOCK.SIGN){setTimeout(()=>{const text=prompt('Enter sign text (4 lines, 15 chars each):\nSeparate lines with |','');
+if(text){const lines=text.split('|').slice(0,4).map(l=>l.substring(0,15));signTexts.set(`${px2},${py},${pz}`,lines.join('\n'));}},50);}
 playSound('place');handSwing=1;
 if(gameMode!=='creative'){currentSlot.count--;if(currentSlot.count<=0)hotbarSlots[player.selectedSlot]=null;}renderHotbar();}}}
 }});
@@ -3838,6 +4046,8 @@ player.isSprinting=!!keys['ControlLeft']&&moveDir.length()>0&&player.hunger>2;
 player.isSneaking=!!keys['ShiftLeft']&&player.onGround&&gameMode!=='creative'&&!(gameMode==='creative'&&isFlying);
 let speed=player.isSprinting?SPRINT_SPEED:MOVE_SPEED;
 if(player.isSneaking)speed*=0.3;
+{const fb=getBlock(Math.floor(player.position.x),Math.floor(player.position.y),Math.floor(player.position.z));
+if(fb===BLOCK.SNOW_LAYER)speed*=0.7;}
 if(player.isSprinting&&Math.random()<0.02*dt&&gameMode!=='creative')player.hunger=Math.max(0,player.hunger-0.1);
 
 // Water detection
@@ -4150,7 +4360,7 @@ const biome=BIOME_NAMES[getBiome(Math.floor(player.position.x),Math.floor(player
 const fps=Math.round(1/Math.max(0.001,lastDt));
 const modeStr=gameMode==='creative'?'Creative'+(isFlying?' [Flying]':''):'Survival';
 const timeHrs=((dayTime*24+6)%24);const tH=Math.floor(timeHrs);const tM=Math.floor((timeHrs-tH)*60);const timeStr=String(tH).padStart(2,'0')+':'+String(tM).padStart(2,'0');const dayPeriod=isDaytime()?'Day':'Night';
-debugEl.textContent=`Minecraft Clone (VoxelCraft)\n\nFPS: ${fps}\n\nXYZ: ${px} / ${py} / ${pz}\nBiome: ${biome}\nMode: ${modeStr}\nTime: ${timeStr} (${dayPeriod})\n\nMobs: ${zombies.length}z ${skeletons.length}s ${passiveMobs.length}a ${villagers.length}v\nLvl: ${playerLevel} XP: ${playerXP}/${getXPForLevel(playerLevel)}`;
+debugEl.textContent=`Minecraft Clone (RFCraft)\n\nFPS: ${fps}\n\nXYZ: ${px} / ${py} / ${pz}\nBiome: ${biome}\nMode: ${modeStr}\nTime: ${timeStr} (${dayPeriod})\n\nMobs: ${zombies.length}z ${skeletons.length}s ${passiveMobs.length}a ${villagers.length}v\nLvl: ${playerLevel} XP: ${playerXP}/${getXPForLevel(playerLevel)}`;
 
 if(gameMode==='creative'){healthBar.innerHTML='';hungerBar.innerHTML='';}
 else{const lowHP=player.health<=4;const hs=18;const hsStep=hs-2;
@@ -4264,10 +4474,10 @@ if(MC_GUI.hotbar){const hb=document.getElementById('hotbar');
 hb.style.backgroundImage='url('+MC_GUI.hotbar+')';hb.style.backgroundSize='100% 100%';
 hb.style.imageRendering='pixelated';hb.style.border='none';hb.style.padding='0';
 hb.style.width='364px';hb.style.height='44px';hb.style.backgroundColor='transparent';}
-const pendingMode=localStorage.getItem('voxelcraft_pending_mode');
-const pendingName=localStorage.getItem('voxelcraft_pending_name');
-if(pendingMode){gameMode=pendingMode;localStorage.removeItem('voxelcraft_pending_mode');}
-if(pendingName){worldName=pendingName;localStorage.removeItem('voxelcraft_pending_name');}
+const pendingMode=localStorage.getItem('rfcraft_pending_mode');
+const pendingName=localStorage.getItem('rfcraft_pending_name');
+if(pendingMode){gameMode=pendingMode;localStorage.removeItem('rfcraft_pending_mode');}
+if(pendingName){worldName=pendingName;localStorage.removeItem('rfcraft_pending_name');}
 const loaded=loadWorld();
 if(!loaded){
 generateWorld();
@@ -4286,7 +4496,7 @@ var _pendingMode=pendingMode;
 requestAnimationFrame(function(){requestAnimationFrame(function(){
 buildAllChunks();_chunkFadeEnabled=true;
 console.log('Chunks built, scene children:',scene.children.length);
-document.title='VoxelCraft';
+document.title='RFCraft';
 // Rebuild torches
 for(let x=0;x<WORLD_SIZE;x++)for(let z=0;z<WORLD_SIZE;z++)for(let y=0;y<WORLD_HEIGHT;y++){
 if(getBlock(x,y,z)===BLOCK.TORCH)addTorchLight(x,y,z);
@@ -4299,7 +4509,7 @@ if(villagers.length===0)spawnInitialVillagers();
 if(!isDaytime()){for(let i=0;i<3;i++){spawnZombie();spawnSkeleton();}}
 renderHotbar();
 initialized=true;
-document.title='VoxelCraft';
+document.title='RFCraft';
 var lm=document.getElementById('loading-msg');if(lm)lm.remove();
 if(_pendingMode){
 gameStarted=true;
@@ -4445,6 +4655,7 @@ updateSkeletons(dt);
 updatePassiveMobs(dt);
 updateVillagers(dt);
 updateWeather(dt);
+updateSnowAccumulation(dt);
 updateClouds(dt);
 updateAmbientSounds(dt);
 updateMusic(dt);
@@ -4737,9 +4948,9 @@ const n=Object.keys(MC_TEX_LOADED).length;
 console.log('MC textures loaded:',n,'/',Object.keys(MC_TEXTURES).length);
 // Clear texture cache and rebuild all block materials with MC textures
 for(const k in TEX_CACHE) delete TEX_CACHE[k];
-for(let bt=1;bt<=51;bt++) buildMaterialsForBlock(bt);
+for(let bt=1;bt<=57;bt++) buildMaterialsForBlock(bt);
 console.log('Block materials rebuilt with MC textures');
-document.title='VoxelCraft ('+n+' MC tex)';
+document.title='RFCraft ('+n+' MC tex)';
 init();});
 
 </script>

@@ -1767,7 +1767,7 @@ c=_isSolidForAO(cx2+offsets[2][0],cy2+offsets[2][1],cz2+offsets[2][2])?1:0;
 if(s1&&s2)return _aoLevels[3];
 return _aoLevels[s1+s2+c];}
 function buildChunkMesh(cx,cz){_skyCache={};const key=`${cx},${cz}`;
-if(chunkMeshes[key]){chunkMeshes[key].forEach(m=>{chunkGroup.remove(m);m.geometry.dispose();});}
+const oldMeshes=chunkMeshes[key]||null;
 const facesByMat={};const sx=cx*CHUNK_SIZE,sz=cz*CHUNK_SIZE;
 for(let x=sx;x<sx+CHUNK_SIZE;x++)for(let z=sz;z<sz+CHUNK_SIZE;z++)for(let y=0;y<WORLD_HEIGHT;y++){
 const block=getBlock(x,y,z);if(block===BLOCK.AIR)continue;
@@ -1830,6 +1830,8 @@ if(b.colors&&b.colors.length>0)geo.setAttribute('color',new THREE.Float32BufferA
 geo.setIndex(b.indices);const mesh=new THREE.Mesh(geo,mat);mesh.matrixAutoUpdate=false;
 const bt=b.isCross?b.block:parseInt(mk);if(TRANSPARENT_BLOCKS.has(bt))mesh.renderOrder=1;chunkGroup.add(mesh);meshes.push(mesh);}
 chunkMeshes[key]=meshes;
+// Remove old meshes AFTER new ones are added (prevents flash)
+if(oldMeshes){oldMeshes.forEach(m=>{chunkGroup.remove(m);m.geometry.dispose();});}
 // Chunk fade-in: briefly scale Y from 0 to 1
 if(meshes.length>0&&_chunkFadeEnabled){const entry={meshes,start:performance.now(),duration:180};_chunkFadeQueue.push(entry);
 meshes.forEach(m=>{m.scale.set(1,0.01,1);m.matrixAutoUpdate=true;});}}

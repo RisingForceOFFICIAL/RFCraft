@@ -1842,11 +1842,12 @@ if(t>=1){e.meshes.forEach(m=>{m.matrixAutoUpdate=false;});_chunkFadeQueue.splice
 
 const _dirtyChunks=new Set();const MAX_CHUNK_REBUILDS_PER_FRAME=8;
 function rebuildChunkAt(x,z){const cx=Math.floor(x/CHUNK_SIZE),cz=Math.floor(z/CHUNK_SIZE);
+// Always mark current chunk + all 4 adjacent chunks dirty (aggressive rebuild)
 _dirtyChunks.add(`${cx},${cz}`);
-const lx=((x%CHUNK_SIZE)+CHUNK_SIZE)%CHUNK_SIZE,lz=((z%CHUNK_SIZE)+CHUNK_SIZE)%CHUNK_SIZE;
-// Mark adjacent chunks dirty at edges AND one block from edges (for face visibility)
-if(lx<=1&&cx>0)_dirtyChunks.add(`${cx-1},${cz}`);if(lx>=CHUNK_SIZE-2&&cx<WORLD_CHUNKS-1)_dirtyChunks.add(`${cx+1},${cz}`);
-if(lz<=1&&cz>0)_dirtyChunks.add(`${cx},${cz-1}`);if(lz>=CHUNK_SIZE-2&&cz<WORLD_CHUNKS-1)_dirtyChunks.add(`${cx},${cz+1}`);}
+if(cx>0)_dirtyChunks.add(`${cx-1},${cz}`);
+if(cx<WORLD_CHUNKS-1)_dirtyChunks.add(`${cx+1},${cz}`);
+if(cz>0)_dirtyChunks.add(`${cx},${cz-1}`);
+if(cz<WORLD_CHUNKS-1)_dirtyChunks.add(`${cx},${cz+1}`);}
 function flushDirtyChunks(){if(_dirtyChunks.size===0)return;let count=0;
 for(const key of _dirtyChunks){if(count>=MAX_CHUNK_REBUILDS_PER_FRAME)break;
 const[cx,cz]=key.split(',').map(Number);buildChunkMesh(cx,cz);_dirtyChunks.delete(key);count++;}}

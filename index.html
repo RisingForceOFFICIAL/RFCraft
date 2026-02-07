@@ -155,25 +155,42 @@ canvas#gameCanvas{display:block}
 @media(max-width:900px) and (pointer:coarse){
 #hotbar{display:none!important}
 .mob-hotbar-wrap{display:flex!important}
-#hud-bars{bottom:48px;gap:20px}
-.heart,.hunger{width:17px;height:17px;font-size:11px;line-height:17px}
-#debug{font-size:9px}
-#minimap{width:80px;height:80px}
-#inventory-panel.mc-creative{padding:8px 10px;min-width:unset;max-width:96vw;max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
-#inventory-panel.mc-creative h2{font-size:13px;margin-bottom:6px}
-#inventory-panel.mc-survival{transform:none;transform-origin:center center;max-width:96vw;max-height:88vh;overflow-y:auto}
-.inv-slot{width:42px;height:42px;min-width:42px;min-height:42px;touch-action:manipulation}
-.inv-slot canvas{width:32px;height:32px}
-.inv-slot .inv-name{font-size:9px;min-width:70px}
-.inv-section-label{font-size:10px;margin:4px 0 3px}
-#crafting-panel{max-width:96vw;max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px}
-#crafting-panel h2{font-size:14px}
-.recipe-row{padding:10px 12px;min-height:44px;touch-action:manipulation}
-#furnace-panel{max-width:96vw;max-height:88vh;overflow-y:auto;min-width:unset;padding:14px}
-.furnace-slot{width:52px;height:52px}
-#trade-panel{max-width:96vw;max-height:88vh}
-.trade-row{padding:10px 12px;min-height:44px}
-.inv-close-btn{width:36px;height:36px;font-size:20px;touch-action:manipulation}
+#hud-bars{bottom:52px;gap:16px;left:50%;transform:translateX(-50%);right:auto}
+.heart,.hunger{width:16px;height:16px;font-size:10px;line-height:16px}
+#debug{font-size:8px;max-width:50vw}
+#minimap{display:none}
+#inventory-panel.mc-creative{padding:10px;min-width:unset;max-width:98vw;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#inventory-panel.mc-creative h2{font-size:14px;margin-bottom:8px}
+#inventory-panel.mc-survival{transform:none;transform-origin:center center;max-width:98vw;max-height:90vh;overflow-y:auto}
+.inv-slot{width:48px;height:48px;min-width:48px;min-height:48px;touch-action:manipulation}
+.inv-slot canvas{width:36px;height:36px}
+.inv-slot .inv-name{font-size:10px;min-width:60px}
+.inv-section-label{font-size:11px;margin:6px 0 4px}
+#crafting-panel{max-width:98vw;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px}
+#crafting-panel h2{font-size:15px}
+.recipe-row{padding:12px 14px;min-height:50px;touch-action:manipulation}
+#furnace-panel{max-width:98vw;max-height:90vh;overflow-y:auto;min-width:unset;padding:16px}
+.furnace-slot{width:56px;height:56px}
+#trade-panel{max-width:98vw;max-height:90vh}
+.trade-row{padding:12px 14px;min-height:50px}
+.inv-close-btn{width:40px;height:40px;font-size:22px;touch-action:manipulation}
+#pause-btn{width:44px;height:44px;font-size:20px}
+.mc-btn{width:60px;height:60px;font-size:24px}
+#mc-jump{width:70px;height:70px;font-size:28px}
+#mc-attack,#mc-sprint{width:56px;height:56px}
+#mob-hotbar .mhb-slot{width:44px;height:44px}
+#xp-bar-bg{bottom:44px;height:4px}
+#xp-level{bottom:48px;font-size:10px}
+#fly-indicator{bottom:110px;font-size:12px;padding:3px 10px}
+#action-bar{bottom:100px;font-size:13px}
+}
+@media(max-height:500px) and (pointer:coarse){
+.mc-btn{width:50px;height:50px;font-size:20px}
+#mc-jump{width:60px;height:60px;font-size:24px}
+#mc-attack,#mc-sprint{width:46px;height:46px}
+#mob-hotbar .mhb-slot{width:38px;height:38px}
+#hud-bars{bottom:46px;gap:12px}
+.heart,.hunger{width:14px;height:14px;font-size:9px;line-height:14px}
 }
 #world-create-screen{position:fixed;inset:0;background:#000;display:none;align-items:center;justify-content:center;z-index:110;font-family:'Silkscreen','VT323',monospace}
 #world-create-panel{text-align:center;color:#fff;background:transparent;border:none;border-radius:0;padding:30px 40px;max-width:420px;width:90%;position:relative;z-index:1}

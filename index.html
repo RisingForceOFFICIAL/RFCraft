@@ -1832,8 +1832,8 @@ const bt=b.isCross?b.block:parseInt(mk);if(TRANSPARENT_BLOCKS.has(bt))mesh.rende
 chunkMeshes[key]=meshes;
 // Remove old meshes AFTER new ones are added (prevents flash)
 if(oldMeshes){oldMeshes.forEach(m=>{chunkGroup.remove(m);m.geometry.dispose();});}
-// Chunk fade-in: briefly scale Y from 0 to 1
-if(meshes.length>0&&_chunkFadeEnabled){const entry={meshes,start:performance.now(),duration:180};_chunkFadeQueue.push(entry);
+// Chunk fade-in: only for NEW chunks (not rebuilds) to prevent flash
+if(meshes.length>0&&_chunkFadeEnabled&&!oldMeshes){const entry={meshes,start:performance.now(),duration:180};_chunkFadeQueue.push(entry);
 meshes.forEach(m=>{m.scale.set(1,0.01,1);m.matrixAutoUpdate=true;});}}
 
 const _chunkFadeQueue=[];let _chunkFadeEnabled=false;
